@@ -10,7 +10,7 @@ const createPost = async (data: Post) => {
 };
 
 const getAllPosts = async (
-  filters: { search?: string } & Partial<Post>,
+  filters: { search?: string; tag?: string } & Partial<Post>,
   options: PaginationOptions
 ) => {
   const {
@@ -38,14 +38,22 @@ const getAllPosts = async (
   // exact match
   if (Object.keys(filterData).length > 0) {
     conditions.push({
-      AND: Object.keys(filterData).map(key => ({
-        [key]: {
-          equals: filterData[key as keyof typeof filterData],
-        },
-      })),
+      AND: Object.keys(filterData).map(key => {
+        if (key === 'tag') {
+          return {
+            tags: {
+              has: filterData[key],
+            },
+          };
+        }
+        return {
+          [key]: {
+            equals: filterData[key as keyof typeof filterData],
+          },
+        };
+      }),
     });
   }
-
   const whereConditions = conditions.length ? { AND: conditions } : {};
 
   const [result, total] = await Promise.all([

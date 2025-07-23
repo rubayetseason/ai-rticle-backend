@@ -15,7 +15,7 @@ const createPost = catchAsync(async (req, res) => {
 });
 
 const getAllPosts = catchAsync(async (req, res) => {
-  const filters = pick(req.query, ['search']);
+  const filters = pick(req.query, ['search', 'tag']);
   const options = pick(req.query, ['sortBy', 'sortOrder', 'limit', 'page']);
   const response = await PostService.getAllPosts(filters, options);
 
