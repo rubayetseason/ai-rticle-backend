@@ -62,6 +62,15 @@ const getAllPosts = async (
       orderBy: { [sortBy]: sortOrder },
       skip,
       take,
+      include: {
+        user: {
+          select: {
+            id: true,
+            username: true,
+            email: true,
+          },
+        },
+      },
     }),
     await prisma.post.count({ where: whereConditions }),
   ]);
@@ -73,7 +82,18 @@ const getAllPosts = async (
 };
 
 const getSinglePost = async (id: string) => {
-  return prisma.post.findUnique({ where: { id } });
+  return prisma.post.findUnique({
+    where: { id },
+    include: {
+      user: {
+        select: {
+          id: true,
+          username: true,
+          email: true,
+        },
+      },
+    },
+  });
 };
 
 const increaseViewCount = async (id: string) => {
