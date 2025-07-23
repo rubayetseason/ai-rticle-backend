@@ -16,4 +16,11 @@ export default {
     expires_in: process.env.JWT_EXPIRES_IN,
     refresh_expires_in: process.env.JWT_REFRESH_EXPIRES_IN,
   },
+  openai: {
+    api_key: process.env.DEEPSEEK_API_KEY,
+    base_url: process.env.DEEPSEEK_BASE_URL,
+    moedel: process.env.DEEPSEEK_MODEL,
+    site_name: process.env.DEEPSEEK_SITE_NAME,
+    site_url: process.env.DEEPSEEK_SITE_URL,
+  },
 };

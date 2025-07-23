@@ -11,10 +11,11 @@ router.get('/:postId', PostController.getSinglePost);
 
 router.post(
   '/create-post',
-
   validateRequest(PostValidation.createPostZodValidation),
   PostController.createPost
 );
+
+router.post('/generate', PostController.generateAIResponse);
 
 router.patch('/:postId', PostController.increaseViewCount);
 

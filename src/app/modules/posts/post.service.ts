@@ -1,12 +1,28 @@
 import { Post, Prisma } from '@prisma/client';
+import config from '../../../config';
 import {
   calculatePagination,
   PaginationOptions,
 } from '../../../helpers/paginationHelper';
+import { openai } from '../../../shared/openai';
 import prisma from '../../../shared/prisma';
 
 const createPost = async (data: Post) => {
   return prisma.post.create({ data });
+};
+
+const generateAIResponse = async (prompt: string): Promise<string> => {
+  const response = await openai.chat.completions.create({
+    model: config.openai.moedel || 'deepseek/deepseek-r1:free',
+    messages: [
+      {
+        role: 'user',
+        content: prompt,
+      },
+    ],
+  });
+
+  return response.choices[0].message.content || '';
 };
 
 const getAllPosts = async (
@@ -109,6 +125,7 @@ const deletePost = async (id: string) => {
 
 const PostService = {
   createPost,
+  generateAIResponse,
   getSinglePost,
   getAllPosts,
   increaseViewCount,
