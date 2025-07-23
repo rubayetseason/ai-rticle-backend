@@ -5,30 +5,30 @@ import config from '../../config';
 import ApiError from '../../errors/ApiError';
 import { jwtHelpers } from '../../helpers/jwtHelpers';
 
-const auth =
-  (...requiredRoles: string[]) =>
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      //get authorization token
-      const token = req.headers.authorization;
-      if (!token) {
-        throw new ApiError(httpStatus.UNAUTHORIZED, 'You are not authorized');
-      }
-      // verify token
-      let verifiedUser = null;
+const auth = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const token = req.headers.authorization;
 
-      verifiedUser = jwtHelpers.verifyToken(token, config.jwt.secret as Secret);
-
-      req.user = verifiedUser; // role  , userid
-
-      // role diye guard korar jnno
-      if (requiredRoles.length && !requiredRoles.includes(verifiedUser.role)) {
-        throw new ApiError(httpStatus.FORBIDDEN, 'Forbidden');
-      }
-      next();
-    } catch (error) {
-      next(error);
+    if (!token) {
+      throw new ApiError(
+        httpStatus.UNAUTHORIZED,
+        'Authorization token missing'
+      );
     }
-  };
+
+    const decoded = jwtHelpers.verifyToken(token, config.jwt.secret as Secret);
+
+    if (!decoded || typeof decoded !== 'object' || !decoded.userId) {
+      throw new ApiError(httpStatus.UNAUTHORIZED, 'Invalid token');
+    }
+
+    // attach decoded user to request object
+    req.user = decoded;
+
+    next();
+  } catch (error) {
+    next(new ApiError(httpStatus.UNAUTHORIZED, 'Token is invalid or expired'));
+  }
+};
 
 export default auth;

@@ -7,12 +7,30 @@ import globalErrorHandler from './app/middlewares/globalErrorHandler';
 import routes from './app/routes';
 
 import cookieParser from 'cookie-parser';
+import config from './config';
 
 const app: Application = express();
 
 app.use(helmet());
 app.use(xss());
-app.use(cors());
+
+const allowedOrigins = config.allowed_origins?.split(',') || [
+  'http://localhost:3000',
+];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true,
+  })
+);
+
 app.use(cookieParser());
 
 //parser
