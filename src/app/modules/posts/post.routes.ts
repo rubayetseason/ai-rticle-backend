@@ -1,5 +1,4 @@
 import express from 'express';
-import auth from '../../middlewares/auth';
 import validateRequest from '../../middlewares/validateRequest';
 import PostController from './post.controller';
 import { PostValidation } from './post.validation';
@@ -8,7 +7,7 @@ const router = express.Router();
 
 router.get('/', PostController.getAllPosts);
 
-router.get('/:postId', auth(), PostController.getSinglePost);
+router.get('/:postId', PostController.getSinglePost);
 
 router.post(
   '/create-post',
@@ -17,8 +16,8 @@ router.post(
   PostController.createPost
 );
 
-router.patch('/:postId', auth(), PostController.increaseViewCount);
+router.patch('/:postId', PostController.increaseViewCount);
 
-router.delete('/:postId', auth(), PostController.deletePost);
+router.delete('/:postId', PostController.deletePost);
 
 export const PostRoutes = router;
