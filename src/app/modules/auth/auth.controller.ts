@@ -40,6 +40,7 @@ const refreshToken = catchAsync(async (req, res) => {
 
 const createUser = catchAsync(async (req: Request, res: Response) => {
   const result = await AuthServices.createUser(req.body);
+
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,

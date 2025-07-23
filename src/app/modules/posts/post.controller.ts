@@ -21,7 +21,7 @@ const getAllPosts = catchAsync(async (req, res) => {
 
   res.status(httpStatus.OK).json({
     success: true,
-    message: 'Categories fetched successfully',
+    message: 'Posts fetched successfully',
     data: response,
   });
 });

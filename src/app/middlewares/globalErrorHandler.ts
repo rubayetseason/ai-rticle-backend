@@ -38,8 +38,30 @@ const globalErrorHandler: ErrorRequestHandler = (
   } else if (error instanceof Prisma.PrismaClientKnownRequestError) {
     const simplifiedError = handleClientError(error);
     statusCode = simplifiedError.statusCode;
-    message = simplifiedError.message;
-    errorMessages = simplifiedError.errorMessages;
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    //@ts-ignore
+    if (error?.meta?.target[0] === 'email') {
+      message = 'Email already exists';
+      errorMessages = [
+        {
+          path: '',
+          message: 'Email already exists',
+        },
+      ];
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      //@ts-ignore
+    } else if (error?.meta?.target[0] === 'username') {
+      message = 'Username already taken';
+      errorMessages = [
+        {
+          path: '',
+          message: 'Username already taken',
+        },
+      ];
+    } else {
+      message = simplifiedError.message;
+      errorMessages = simplifiedError.errorMessages;
+    }
   } else if (error instanceof ApiError) {
     statusCode = error?.statusCode;
     message = error.message;

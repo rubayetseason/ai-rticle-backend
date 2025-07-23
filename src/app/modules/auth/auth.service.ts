@@ -27,7 +27,7 @@ const loginUser = async (payload: TLoginUser) => {
   });
 
   if (!user)
-    throw new ApiError(httpStatus.NOT_FOUND, 'This user is not found !');
+    throw new ApiError(httpStatus.NOT_FOUND, 'This user is not found!');
 
   const isMatched = await bcrypt.compare(payload.password, user.password);
   if (!isMatched)
