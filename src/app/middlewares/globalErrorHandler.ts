@@ -38,23 +38,42 @@ const globalErrorHandler: ErrorRequestHandler = (
   } else if (error instanceof Prisma.PrismaClientKnownRequestError) {
     const simplifiedError = handleClientError(error);
     statusCode = simplifiedError.statusCode;
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    //@ts-ignore
-    if (error?.meta?.target[0] === 'email') {
+
+    // Handle Foreign Key Constraint Violation
+    if (
+      error.code === 'P2003' &&
+      error.meta?.constraint === 'Post_userId_fkey'
+    ) {
+      message = 'User not found';
+      errorMessages = [
+        {
+          path: 'userId',
+          message: 'User not found',
+        },
+      ];
+    } else if (
+      error.code === 'P2002' &&
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      //@ts-ignore
+      error.meta?.target?.includes('email')
+    ) {
       message = 'Email already exists';
       errorMessages = [
         {
-          path: '',
+          path: 'email',
           message: 'Email already exists',
         },
       ];
+    } else if (
+      error.code === 'P2002' &&
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       //@ts-ignore
-    } else if (error?.meta?.target[0] === 'username') {
+      error.meta?.target?.includes('username')
+    ) {
       message = 'Username already taken';
       errorMessages = [
         {
-          path: '',
+          path: 'username',
           message: 'Username already taken',
         },
       ];
