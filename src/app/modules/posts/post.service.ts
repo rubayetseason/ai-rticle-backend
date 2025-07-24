@@ -26,7 +26,11 @@ const generateAIResponse = async (prompt: string): Promise<string> => {
 };
 
 const getAllPosts = async (
-  filters: { search?: string; tag?: string } & Partial<Post>,
+  filters: {
+    search?: string;
+    tag?: string;
+    creatorId?: string;
+  } & Partial<Post>,
   options: PaginationOptions
 ) => {
   const {
@@ -62,6 +66,14 @@ const getAllPosts = async (
             },
           };
         }
+        if (key === 'creatorId') {
+          return {
+            userId: {
+              equals: filterData[key],
+            },
+          };
+        }
+
         return {
           [key]: {
             equals: filterData[key as keyof typeof filterData],
@@ -70,6 +82,7 @@ const getAllPosts = async (
       }),
     });
   }
+
   const whereConditions = conditions.length ? { AND: conditions } : {};
 
   const [result, total] = await Promise.all([
